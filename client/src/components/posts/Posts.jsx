@@ -1,38 +1,28 @@
-import React from 'react'
-import "./posts.scss"
-import Post from '../post/Post';
+import React from "react";
+import "./posts.scss";
+import Post from "../post/Post";
+import { QueryClient, QueryClientProvider, useQuery } from "react-query";
+import { makeRequest } from "../../axios";
 
 const Posts = () => {
+  const { isLoading, error, data } = useQuery(["posts"], () =>
+    makeRequest.get("/posts").then((res) => {
+      return res.data;
+    })
+  );
 
-  const posts = [
-    {
-      id: 1,
-      name: "Aiyma Turmanova",
-      userId: 1,
-      profilePic:
-        "https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit",
-      img: "https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600",
-    },
-    {
-      id: 2,
-      name: "Aiganyw Kemelbekova",
-      userId: 2,
-      profilePic:
-        "https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      desc: "Tenetur iste voluptates dolorem rem commodi voluptate pariatur, voluptatum, laboriosam consequatur enim nostrum cumque! Maiores a nam non adipisci minima modi tempore.",
-    },
-  ];
-
+  console.log(data);
   return (
-    <div className='posts'>
-      {posts.map(post => (
-        <div className='post'>
-          <Post post={post} key={post.id}/>
-        </div>
-      ))}
+    <div className="posts">
+      {error ? "Ошибка загрузки" : (isLoading
+        ? "Загрузка"
+        : data.map((post) => (
+            <div className="post">
+              <Post post={post} key={post.id} />
+            </div>
+          )))}
     </div>
-  )
-}
+  );
+};
 
-export default Posts
+export default Posts;
